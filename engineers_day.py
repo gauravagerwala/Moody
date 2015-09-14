@@ -1,4 +1,6 @@
 import cv2
+import os
+from subprocess import Popen
 import sys
 
 faceCascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -6,6 +8,7 @@ eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
 video_capture = cv2.VideoCapture(0)
 video_capture.read()
 face_count = 0
+playing = False
 eye_count = 0
 face_no_count = 0
 eye_no_count = 0
@@ -35,22 +38,27 @@ while True:
             eye_there= True
     if(face_there):
         face_count = face_count + 1
-        if(face_count>6):
+        if(face_count>10):
+            if playing == False :
+             pid = Popen(["rhythmbox","comingback.mp3"]).pid
+             playing = True
             print("I see you!")
             face_count = 0
     else:
         face_no_count = face_no_count + 1
-        if(face_no_count>6):
+        if(face_no_count>10):
             print("Where did you go?")
+            os.system("kill "+str(pid))
+            playing = False
             face_no_count = 0
     if(eye_there):
         eye_count = eye_count + 1
-        if(eye_count>6):
+        if(eye_count>10):
             print("Your eyes too!")
             eye_count = 0
     else:
         eye_no_count = eye_no_count + 1
-        if(eye_no_count>6):
+        if(eye_no_count>10):
             print("Open your eyes!")
             eye_no_count = 0
     # Display the resulting frame
